@@ -1,0 +1,32 @@
+// num = @{ int ~ ("." ~ ASCII_DIGIT*)? ~ (^"e" ~ int)? }
+//     int = { ("+" | "-")? ~ ASCII_DIGIT+ }
+
+// operation = _{ add | subtract | multiply | divide | power }
+//     add      = { "+" }
+//     subtract = { "-" }
+//     multiply = { "*" }
+//     divide   = { "/" }
+//     power    = { "^" }
+
+// expr = { term ~ (operation ~ term)* }
+// term = _{ num | "(" ~ expr ~ ")" }
+
+
+class_file = _{ SOI ~ class ~ EOI }
+
+class = 
+    { class_access_mod ~ class_def_mod? ~ "class" ~ class_ident
+        ~ "{" 
+        ~ class_body
+        ~ "}" 
+    }
+
+class_access_mod = @{ "public" | "private" | "global" }
+class_def_mod = @{ "abstract" | "virtual" | "with sharing" | "without sharing" }
+class_ident = { ident }
+
+ident = { (ASCII_ALPHA | "_") ~ ASCII_ALPHANUMERIC* }
+
+class_body = _{ "" }
+
+WHITESPACE = _{ " " | "\t" }
