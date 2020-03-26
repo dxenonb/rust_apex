@@ -56,7 +56,9 @@ fn main() {
         for entry in read_dir(&path).unwrap() {
             let entry = entry.unwrap();
             let path = entry.path();
-            summary.parse(path);
+            if path.is_file() && path.extension() == Some("cls".as_ref()) {
+                summary.parse(path);
+            }
         }
     } else {
         summary.parse(path);
