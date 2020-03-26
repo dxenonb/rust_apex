@@ -15,5 +15,12 @@ public class Foo {
     private Foo() {
 
     }
-    
+
+    public Foo(Integer a) {
+
+    }
+
+    public Foo(Integer a, Integer b) {
+
+    }
 }

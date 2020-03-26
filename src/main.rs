@@ -13,16 +13,31 @@ fn main() {
 
     let mut errors = Vec::new();
     let mut success = 0;
+    let mut expected_failures = 0;
 
     for entry in read_dir("examples").unwrap() {
         let entry = entry.unwrap();
         let path = &entry.path();
         if path.is_file() {
+            let valid = path.to_str()
+                .map(|s| s.contains(".valid"))
+                .unwrap_or(false);
             let contents = read_to_string(&path).unwrap();
-            if let Err(err) = display_parse(&contents) {
-                errors.push((path.clone(), err));
+
+            let result = display_parse(&contents);
+
+            if let Err(err) = result {
+                if valid {
+                    errors.push((path.clone(), err));
+                } else {
+                    expected_failures += 1;
+                }
             } else {
-                success += 1;
+                if valid {
+                    success += 1;
+                } else {
+                    errors.push((path.clone(), "expected parse to fail".to_string()))
+                }
             }
         }
     }
@@ -34,11 +49,12 @@ fn main() {
 
     println!();
 
-    let total = success + errors.len();
+    let total = success + expected_failures + errors.len();
 
     println!("Parsed {} files.", total);
-    println!("\tparsing: {}", success);
-    println!("\tfailing: {}", errors.len());
+    println!("\t            valid: {}", success);
+    println!("\t          invalid: {}", expected_failures);
+    println!("\tunexpected errors: {}", errors.len());
 
     if !errors.is_empty() {
         println!("\nSee above for errors.");

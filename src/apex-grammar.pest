@@ -29,7 +29,9 @@ class_body = _{ constructor* }
 constructor = { method_access_mod? ~ ident ~ method_args ~ method_body }
 
 method_access_mod = @{ "public" | "private" | "global" }
-method_args = { "(" ~ ")" }
+method_args = { "(" ~ method_args_list? ~ ")" }
+method_args_list = _{ (method_arg ~ ",")* ~ method_arg }
+method_arg = { ident ~ ident }
 method_body = { "{" ~ "}" }
 
 annotation = { "@" ~ ident ~ annotation_arg? }
