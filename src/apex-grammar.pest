@@ -65,7 +65,7 @@ expr_primary = { literal | el_access }
 assign_op = @{ ("+" | "-" | "*" | "/")? ~ "=" }
 bin_op = { "+=" | "=" }
 
-el_access = { ident ~ ("." ~ ident)? }
+el_access = { ident ~ ("." ~ ident)* }
 ident = @{ (ASCII_ALPHA | "_") ~ ASCII_ALPHANUMERIC* }
 literal = @{ "null" | num }
 num = @{ ASCII_DIGIT ~ ("." ~ (ASCII_DIGIT*)? )? ~ "L"? }
