@@ -43,7 +43,7 @@ impl Summary {
 }
 
 fn main() {
-    let mut args = std::env::args().skip(1);
+    let mut args = env::args().skip(1);
     let path = args.next().expect("path argument is required");
     let path = PathBuf::from(path);
 
