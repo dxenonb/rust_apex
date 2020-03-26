@@ -22,23 +22,30 @@ class =
         ~ "}" 
     }
 
-class_access_mod = @{ "public" | "private" | "global" }
+class_access_mod = _{ access_mod }
 class_def_mod = @{ "abstract" | "virtual" | "with sharing" | "without sharing" }
-class_body = _{ constructor* }
+class_body = _{ class_item* }
+class_item = { static_field | constructor }
 
 constructor = { method_access_mod? ~ ident ~ method_args ~ method_body }
 
-method_access_mod = @{ "public" | "private" | "global" }
+method_access_mod = _{ access_mod }
 method_args = { "(" ~ method_args_list? ~ ")" }
 method_args_list = _{ (method_arg ~ ",")* ~ method_arg }
 method_arg = { ident ~ ident }
 method_body = { "{" ~ "}" }
 
+// TODO: Allow initial assignment
+static_field = { field_access_mod? ~ "static" ~ ident ~ ident ~ ";" }
+field_access_mod = _{ access_mod }
+
 annotation = { "@" ~ ident ~ annotation_arg? }
 annotation_arg = { "(" ~ ident ~ "=" ~ literal ~ ")" }
 
+access_mod = @{ "public" | "private" | "global" }
+
 ident = @{ (ASCII_ALPHA | "_") ~ ASCII_ALPHANUMERIC* }
-literal = @{ num }
+literal = @{ num | "null" }
 num = @{ ASCII_DIGIT* ~ ("." ~ (ASCII_DIGIT*)? )? ~ "L"? }
 
 WHITESPACE = _{ " " | "\t" | NEWLINE }
