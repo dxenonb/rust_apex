@@ -19,19 +19,20 @@ fn main() {
         let path = &entry.path();
         if path.is_file() {
             let contents = read_to_string(&path).unwrap();
-            println!("Parsing file: {:?}", &path);
             if let Err(err) = display_parse(&contents) {
-                errors.push(err);
+                errors.push((path.clone(), err));
             } else {
                 success += 1;
             }
         }
     }
 
-    // TODO: oops forgot to track file name
-    for error in &errors {
-        println!("Error: {}", error);
+    for (file, error) in &errors {
+        println!("Error in file: {:?}", file);
+        println!("{}", error);
     }
+
+    println!();
 
     let total = success + errors.len();
 
