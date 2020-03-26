@@ -25,17 +25,20 @@ class =
 class_access_mod = _{ access_mod }
 class_def_mod = @{ "abstract" | "virtual" | "with sharing" | "without sharing" }
 class_body = _{ class_item* }
-class_item = { static_field | constructor }
+class_item = { field | constructor | method }
 
 constructor = { method_access_mod? ~ ident ~ method_args ~ method_body }
-
+method = { method_access_mod? ~ ident ~ ident ~ method_args ~ method_body }
 method_access_mod = _{ access_mod }
 method_args = { "(" ~ method_args_list? ~ ")" }
 method_args_list = _{ (method_arg ~ ",")* ~ method_arg }
 method_arg = { ident ~ ident }
-method_body = { "{" ~ "}" }
+method_body = { "{" ~ statement* ~ "}" }
 
 // TODO: Allow initial assignment
+// TODO: getters/setters
+field = { inst_field | static_field }
+inst_field = { field_access_mod? ~ ident ~ ident ~ ";" }
 static_field = { field_access_mod? ~ "static" ~ ident ~ ident ~ ";" }
 field_access_mod = _{ access_mod }
 
@@ -44,8 +47,27 @@ annotation_arg = { "(" ~ ident ~ "=" ~ literal ~ ")" }
 
 access_mod = @{ "public" | "private" | "global" }
 
+statement = 
+    { 
+        ( statement_return
+        | expr
+        )
+    ~ ";" 
+    }
+statement_return = { "return" ~ expr }
+
+expr = { expr_assignment }
+expr_assignment = { expr_equality ~ (assign_op ~ expr_equality)* }
+expr_equality = { expr_primary } // TODO: etc
+expr_primary = { literal | el_access }
+
+// TODO: Verify precedence and add missing ops
+assign_op = @{ ("+" | "-" | "*" | "/")? ~ "=" }
+bin_op = { "+=" | "=" }
+
+el_access = { ident ~ ("." ~ ident)? }
 ident = @{ (ASCII_ALPHA | "_") ~ ASCII_ALPHANUMERIC* }
-literal = @{ num | "null" }
-num = @{ ASCII_DIGIT* ~ ("." ~ (ASCII_DIGIT*)? )? ~ "L"? }
+literal = @{ "null" | num }
+num = @{ ASCII_DIGIT ~ ("." ~ (ASCII_DIGIT*)? )? ~ "L"? }
 
 WHITESPACE = _{ " " | "\t" | NEWLINE }
