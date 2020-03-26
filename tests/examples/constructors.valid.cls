@@ -11,7 +11,7 @@ public class Foo {
     public Foo() {
 
     }
-
+    
     private Foo() {
 
     }

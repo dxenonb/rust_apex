@@ -1,5 +1,5 @@
 [package]
-name = "rust_apex"
+name = "apex"
 version = "0.1.0"
 authors = ["dxenonb <dr.dxb.me@gmail.com>"]
 edition = "2018"
