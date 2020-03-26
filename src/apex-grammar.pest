@@ -15,7 +15,8 @@
 class_file = _{ SOI ~ class ~ EOI }
 
 class = 
-    { class_access_mod ~ class_def_mod? ~ "class" ~ class_ident
+    { annotation?
+    ~ class_access_mod ~ class_def_mod? ~ "class" ~ class_ident
         ~ "{" 
         ~ class_body
         ~ "}" 
@@ -23,10 +24,15 @@ class =
 
 class_access_mod = @{ "public" | "private" | "global" }
 class_def_mod = @{ "abstract" | "virtual" | "with sharing" | "without sharing" }
-class_ident = { ident }
+class_ident = _{ ident }
 
-ident = { (ASCII_ALPHA | "_") ~ ASCII_ALPHANUMERIC* }
+annotation = { "@" ~ ident ~ annotation_arg? }
+annotation_arg = { "(" ~ ident ~ "=" ~ literal ~ ")" }
+
+ident = @{ (ASCII_ALPHA | "_") ~ ASCII_ALPHANUMERIC* }
+literal = @{ num }
+num = @{ ASCII_DIGIT* ~ ("." ~ (ASCII_DIGIT*)? )? ~ "L"? }
 
 class_body = _{ "" }
 
-WHITESPACE = _{ " " | "\t" }
+WHITESPACE = _{ " " | "\t" | NEWLINE }
