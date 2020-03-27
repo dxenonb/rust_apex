@@ -10,7 +10,7 @@ extern crate pest_derive;
 struct ApexParser;
 
 pub fn parse_class(input: &str) -> Result<Pairs<Rule>, PestError<Rule>> {
-    ApexParser::parse(Rule::class, input.as_ref())
+    ApexParser::parse(Rule::class_file, input.as_ref())
 }
 
 #[cfg(test)]
