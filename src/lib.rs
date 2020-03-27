@@ -24,4 +24,19 @@ mod test {
     fn parses_integers() {
         ApexParser::parse(Rule::num, "124").unwrap();
     }
+
+    #[test]
+    fn parses_annotations() {
+        ApexParser::parse(Rule::annotation, "@isTest").unwrap();
+        ApexParser::parse(Rule::annotation, "@IsTest").unwrap();
+        ApexParser::parse(Rule::annotation, "@RemoteAction").unwrap();
+        ApexParser::parse(Rule::annotation, "@Arg(x = 2)").unwrap();
+    }
+
+    #[test]
+    fn parses_type_names() {
+        ApexParser::parse(Rule::type_name, "Integer").unwrap();
+        ApexParser::parse(Rule::type_name, "List<Object>").unwrap();
+        ApexParser::parse(Rule::type_name, "Map<Integer, List<Foo__c>>").unwrap();
+    }
 }

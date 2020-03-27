@@ -15,8 +15,8 @@
 class_file = _{ SOI ~ class ~ EOI }
 
 class = 
-    { annotation?
-    ~ class_access_mod ~ class_def_mod? ~ "class" ~ ident
+    { annotation* 
+    ~ class_access_mod? ~ class_def_mod? ~ "class" ~ ident
         ~ "{" 
         ~ class_body
         ~ "}" 
@@ -28,18 +28,20 @@ class_body = _{ class_item* }
 class_item = { field | constructor | method }
 
 constructor = { method_access_mod? ~ ident ~ method_args ~ method_body }
-method = { method_access_mod? ~ ident ~ ident ~ method_args ~ method_body }
+method = 
+    { annotation?
+    ~ method_access_mod? ~ "static"? ~ type_name ~ ident ~ method_args 
+        ~ method_body 
+    }
 method_access_mod = _{ access_mod }
 method_args = { "(" ~ method_args_list? ~ ")" }
 method_args_list = _{ (method_arg ~ ",")* ~ method_arg }
-method_arg = { ident ~ ident }
+method_arg = { type_name ~ ident }
 method_body = { "{" ~ statement* ~ "}" }
 
 // TODO: Allow initial assignment
 // TODO: getters/setters
-field = { inst_field | static_field }
-inst_field = { field_access_mod? ~ ident ~ ident ~ ";" }
-static_field = { field_access_mod? ~ "static" ~ ident ~ ident ~ ";" }
+field = { field_access_mod? ~ "static"? ~ type_name ~ ident ~ ";" }
 field_access_mod = _{ access_mod }
 
 annotation = { "@" ~ ident ~ annotation_arg? }
@@ -50,28 +52,38 @@ access_mod = @{ "public" | "private" | "global" }
 statement = 
     { 
         ( statement_return
+        | statement_decl
         | expr
         )
     ~ ";" 
     }
 statement_return = { "return" ~ expr }
+statement_decl = { type_name ~ ident ~ "=" ~ expr }
 
 expr = { expr_assignment }
 expr_assignment = { expr_equality ~ (assign_op ~ expr_equality)* }
 expr_equality = { expr_primary } // TODO: etc
-expr_primary = { literal | el_access }
+expr_primary = { literal | func_call | el_access }
 
 // TODO: Verify precedence and add missing ops
 assign_op = @{ ("+" | "-" | "*" | "/")? ~ "=" }
 bin_op = { "+=" | "=" }
 
+type_name = { type_path ~ type_args? }
+type_args = { "<" ~ type_name ~ ("," ~ type_name)* ~ ">" }
+type_path = { el_access }
+
+func_call = { el_access ~ "(" ~ func_args? ~ ")" }
+func_args = { expr ~ ("," ~ expr)* }
 el_access = { ident ~ ("." ~ ident)* }
-ident = @{ (ASCII_ALPHA | "_") ~ ASCII_ALPHANUMERIC* }
+ident = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 literal = @{ "null" | num }
 num = @{ ASCII_DIGIT ~ ("." ~ (ASCII_DIGIT*)? )? ~ "L"? }
 
 WHITESPACE = _{ " " | "\t" | NEWLINE }
-COMMENT = { line_comment | block_comment }
+COMMENT = _{ comment }
+
+comment = { line_comment | block_comment }
 
 line_comment = { "//" ~ (!(NEWLINE) ~ ANY)* ~ NEWLINE }
 block_comment = { "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
