@@ -63,7 +63,7 @@ statement_decl = { type_name ~ ident ~ "=" ~ expr }
 expr = { expr_assignment }
 expr_assignment = { expr_equality ~ (assign_op ~ expr_equality)* }
 expr_equality = { expr_primary } // TODO: etc
-expr_primary = { literal | func_call | el_access }
+expr_primary = { literal | func_call | el_access | soql }
 
 // TODO: Verify precedence and add missing ops
 assign_op = @{ ("+" | "-" | "*" | "/")? ~ "=" }
@@ -79,6 +79,10 @@ el_access = { ident ~ ("." ~ ident)* }
 ident = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 literal = @{ "null" | "true" | "false" | num }
 num = @{ ASCII_DIGIT ~ ("." ~ (ASCII_DIGIT*)? )? ~ "L"? }
+
+// TODO: very TODO!
+soql = { "[" ~ raw_soql ~ (soql ~ raw_soql?)* ~ "]" }
+raw_soql = { (!("]" | "[") ~ ANY)* }
 
 WHITESPACE = _{ " " | "\t" | NEWLINE }
 COMMENT = _{ comment }
