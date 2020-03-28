@@ -18,6 +18,10 @@ global class Foo {
         y = a || b && c;
     }
 
+    global static void ternary() {
+        x = true ? 1 : 0;
+    }
+
     global static void calls() {
         foo();
         bar(x, y, z);

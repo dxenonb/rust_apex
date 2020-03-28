@@ -68,7 +68,8 @@ statement_dml = { ("insert" | "update" | "delete") ~ expr }
 
 // TODO: Verify precedence and adjust associativity
 // TODO: pest's precedence climber is pry better...
-expr = { expr_assignment }
+expr = { expr_ternary }
+expr_ternary = { expr_assignment ~ ("?" ~ expr ~ ":" ~ expr)? }
 expr_assignment = { expr_or ~ (assign_op ~ expr_or)* }
 expr_or = { expr_and ~ ("||" ~ expr_and)*  }
 expr_and = { expr_equality ~ ("&&" ~ expr_equality)*  }
