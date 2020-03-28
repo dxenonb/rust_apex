@@ -34,8 +34,8 @@ mod test {
     }
 
     #[test]
-    fn parses_func_call() {
-        ApexParser::parse(Rule::func_call, "baz(x, 1000, 'ninja stars', null)").unwrap();
+    fn parses_func_args() {
+        ApexParser::parse(Rule::func_args, "(x, 1000, 'ninja stars', null)").unwrap();
     }
 
     #[test]

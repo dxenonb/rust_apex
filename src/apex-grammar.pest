@@ -1,17 +1,3 @@
-// num = @{ int ~ ("." ~ ASCII_DIGIT*)? ~ (^"e" ~ int)? }
-//     int = { ("+" | "-")? ~ ASCII_DIGIT+ }
-
-// operation = _{ add | subtract | multiply | divide | power }
-//     add      = { "+" }
-//     subtract = { "-" }
-//     multiply = { "*" }
-//     divide   = { "/" }
-//     power    = { "^" }
-
-// expr = { term ~ (operation ~ term)* }
-// term = _{ num | "(" ~ expr ~ ")" }
-
-
 class_file = _{ SOI ~ class ~ EOI }
 
 class = 
@@ -75,7 +61,7 @@ expr_comparison = { expr_multiplication ~ (comp_op ~ expr_multiplication)*  }
 expr_multiplication = { expr_addition ~ (mul_op ~ expr_addition)* }
 expr_addition = { expr_unary ~ (add_op ~ expr_unary)* }
 expr_unary = { unary_op* ~ expr_primary }
-expr_primary = { expr_new | literal | func_call | el_access | soql }
+expr_primary = { expr_new | literal | el_access | soql }
 expr_new = { "new" ~ type_name ~ type_constructor_args }
 
 assign_op = @{ ("+" | "-" | "*" | "/")? ~ "=" }
@@ -102,12 +88,15 @@ sobject_field_arg = { ident ~ "=" ~ expr }
 
 type_name = { type_path ~ type_args? }
 type_args = { "<" ~ type_name ~ ("," ~ type_name)* ~ ">" }
-type_path = { el_access }
+type_path = { el_path }
 
-func_call = { el_access ~ func_args }
+// TODO: rename to field access + item path?, then array_access => el_access
+el_access = { el_path ~ el_op* }
+el_op = { func_args | array_access }
 func_args = { "(" ~ func_args_list? ~ ")" }
 func_args_list = { expr ~ ("," ~ expr)* }
-el_access = { ident ~ ("." ~ ident)* }
+array_access = { "[" ~ expr? ~ "]"}
+el_path = { ident ~ ("." ~ ident)* }
 ident = @{ !(keyword ~ WHITESPACE) ~ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 literal = @{ "null" | "true" | "false" | string | num }
 num = @{ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT* )? ~ "L"? }
