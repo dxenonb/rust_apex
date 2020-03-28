@@ -82,8 +82,11 @@ func_args = { "(" ~ func_args_list? ~ ")" }
 func_args_list = { expr ~ ("," ~ expr)* }
 el_access = { ident ~ ("." ~ ident)* }
 ident = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
-literal = @{ "null" | "true" | "false" | num }
+literal = @{ "null" | "true" | "false" | string | num }
 num = @{ ASCII_DIGIT ~ ("." ~ (ASCII_DIGIT*)? )? ~ "L"? }
+string = { "'" ~ (raw_string | escape)* ~ "'" }
+escape = { "\\" ~ ANY }
+raw_string = { (!("\\" | "'") ~ ANY)+ }
 
 // TODO: very TODO!
 soql = { "[" ~ raw_soql ~ (soql ~ raw_soql?)* ~ "]" }
