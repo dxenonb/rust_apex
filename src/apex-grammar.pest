@@ -52,6 +52,7 @@ statement =
     { block
     | statement_if
     | statement_for
+    | statement_try_catch
     | (
         ( statement_return
         | statement_dml
@@ -67,6 +68,9 @@ statement_return = { "return" ~ expr }
 statement_decl = { type_name ~ ident ~ ("=" ~ expr)? }
 // TODO: dml_upsert
 statement_dml = { ("insert" | "update" | "delete") ~ expr }
+statement_try_catch = { "try" ~ block ~ "catch" ~ catch_guard ~ block }
+
+catch_guard = { "(" ~ type_name ~ ident ~ ")" }
 
 for_op = _{ for_iterator | for_c_style }
 for_iterator = { type_name ~ ident ~ ":" ~ expr }
