@@ -41,9 +41,12 @@ method_body = { "{" ~ statement* ~ "}" }
 
 // TODO: Allow initial assignment
 // TODO: getters/setters
-field = { field_access_mod? ~ "static"? ~ type_name ~ ident ~ ";" }
+field = 
+    { field_access_mod? ~ field_modifiers ~ type_name ~ ident 
+    ~ (("=" ~ expr) | ";")
+    }
 field_access_mod = _{ access_mod }
-
+field_modifiers = { ("static" | "final")* }
 annotation = { "@" ~ ident ~ annotation_arg? }
 annotation_arg = { "(" ~ ident ~ "=" ~ literal ~ ")" }
 
@@ -52,14 +55,14 @@ access_mod = @{ "public" | "private" | "global" }
 statement = 
     { 
         ( statement_return
-        | statement_decl
         | statement_dml
+        | statement_decl
         | expr
         )
     ~ ";" 
     }
 statement_return = { "return" ~ expr }
-statement_decl = { type_name ~ ident ~ "=" ~ expr }
+statement_decl = { type_name ~ ident ~ ("=" ~ expr)? }
 // TODO: dml_upsert
 statement_dml = { ("insert" | "update" | "delete") ~ expr }
 
@@ -105,12 +108,14 @@ func_call = { el_access ~ func_args }
 func_args = { "(" ~ func_args_list? ~ ")" }
 func_args_list = { expr ~ ("," ~ expr)* }
 el_access = { ident ~ ("." ~ ident)* }
-ident = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
+ident = @{ !(keyword ~ WHITESPACE) ~ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 literal = @{ "null" | "true" | "false" | string | num }
 num = @{ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT* )? ~ "L"? }
 string = { "'" ~ (raw_string | escape)* ~ "'" }
 escape = { "\\" ~ ANY }
 raw_string = { (!("\\" | "'") ~ ANY)+ }
+
+keyword = @{ "new" }
 
 // TODO: very TODO!
 soql = { "[" ~ raw_soql ~ (soql ~ raw_soql?)* ~ "]" }
