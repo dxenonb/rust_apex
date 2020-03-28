@@ -29,7 +29,8 @@ method_body = { "{" ~ statement* ~ "}" }
 // TODO: getters/setters
 field = 
     { field_access_mod? ~ field_modifiers ~ type_name ~ ident 
-    ~ (("=" ~ expr) | ";")
+    ~ ("=" ~ expr)? 
+    ~ ";"
     }
 field_access_mod = _{ access_mod }
 field_modifiers = { ("static" | "final")* }
