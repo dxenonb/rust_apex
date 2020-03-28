@@ -75,11 +75,20 @@ mod test {
     }
     
     #[test]
-    fn parses_calling_returned_functions() {
+    fn parses_chained_el_ops() {
         // can't actually happen in Apex? but it probably shouldn't be a parser error
         ApexParser::parse(
             Rule::expr, 
             "a.b()()()"
+        ).unwrap();
+
+        ApexParser::parse(
+            Rule::expr, 
+            "a.b()[0]()"
+        ).unwrap();
+        ApexParser::parse(
+            Rule::expr, 
+            "a[0][1]"
         ).unwrap();
     }
 
