@@ -18,7 +18,6 @@ impl Summary {
             self.errors.push((path.as_ref().to_path_buf(), err.to_string()));
         } else {
             self.success += 1;
-            println!("Successfully parsed: {:?}", &path);
         }
     }
 
@@ -28,14 +27,16 @@ impl Summary {
 
     // TODO: impl display
     fn print(&self) {
+        println!("Parsed {} files.", self.total());
+        println!("\t valid: {}", self.success);
+        println!("\terrors: {}", self.errors.len());
+
+        println!();
+
         for (file, error) in &self.errors {
             println!("Error in file: {:?}", file);
             println!("{}", error);
         }
-        println!();
-        println!("Parsed {} files.", self.total());
-        println!("\t valid: {}", self.success);
-        println!("\terrors: {}", self.errors.len());
     
         if !self.errors.is_empty() {
             println!("\nSee above for errors.");
