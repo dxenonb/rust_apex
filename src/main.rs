@@ -11,13 +11,14 @@ struct Summary {
 }
 
 impl Summary {
-    fn parse<P: AsRef<Path>>(&mut self, path: P) {
+    fn parse<P: AsRef<Path> + std::fmt::Debug>(&mut self, path: P) {
         let contents = read_to_string(&path).unwrap();
         let result = parse_class(&contents);
         if let Err(err) = result {
             self.errors.push((path.as_ref().to_path_buf(), err.to_string()));
         } else {
             self.success += 1;
+            println!("Successfully parsed: {:?}", &path);
         }
     }
 
