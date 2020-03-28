@@ -39,4 +39,28 @@ mod test {
         ApexParser::parse(Rule::type_name, "List<Object>").unwrap();
         ApexParser::parse(Rule::type_name, "Map<Integer, List<Foo__c>>").unwrap();
     }
+
+    #[test]
+    fn parses_new_exprs() {
+        ApexParser::parse(
+            Rule::expr_new, 
+            "new Map<Integer, List<Foo__c>>(alpha, beta)"
+        ).unwrap();
+        ApexParser::parse(
+            Rule::expr_new, 
+            "new Map<Integer, List<Foo__c>>(alpha)"
+        ).unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn disallows_trailing_commas() {
+        ApexParser::parse(
+            Rule::expr_new, 
+            "new Map<Integer, List<Foo__c>>(
+                alpha, 
+                beta,
+            )"
+        ).unwrap();
+    }
 }

@@ -30,7 +30,7 @@ class_item = { field | constructor | method }
 constructor = { method_access_mod? ~ ident ~ method_args ~ method_body }
 method = 
     { annotation?
-    ~ method_access_mod? ~ "static"? ~ "testmethod"? ~ type_name ~ ident ~ method_args 
+    ~ method_access_mod? ~ "static"? ~ (^"testmethod")? ~ type_name ~ ident ~ method_args 
         ~ method_body 
     }
 method_access_mod = _{ access_mod }
@@ -63,7 +63,8 @@ statement_decl = { type_name ~ ident ~ "=" ~ expr }
 expr = { expr_assignment }
 expr_assignment = { expr_equality ~ (assign_op ~ expr_equality)* }
 expr_equality = { expr_primary } // TODO: etc
-expr_primary = { literal | func_call | el_access | soql }
+expr_primary = { expr_new | literal | func_call | el_access | soql }
+expr_new = { "new" ~ type_name ~ func_args }
 
 // TODO: Verify precedence and add missing ops
 assign_op = @{ ("+" | "-" | "*" | "/")? ~ "=" }
@@ -73,8 +74,9 @@ type_name = { type_path ~ type_args? }
 type_args = { "<" ~ type_name ~ ("," ~ type_name)* ~ ">" }
 type_path = { el_access }
 
-func_call = { el_access ~ "(" ~ func_args? ~ ")" }
-func_args = { expr ~ ("," ~ expr)* }
+func_call = { el_access ~ func_args }
+func_args = { "(" ~ func_args_list? ~ ")" }
+func_args_list = { expr ~ ("," ~ expr)* }
 el_access = { ident ~ ("." ~ ident)* }
 ident = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 literal = @{ "null" | "true" | "false" | num }
