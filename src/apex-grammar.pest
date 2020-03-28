@@ -54,7 +54,7 @@ statement =
         ~ ";" 
       )
     }
-statement_if = { "if" ~ "(" ~ expr ~ ")" ~ statement }
+statement_if = { "if" ~ "(" ~ expr ~ ")" ~ statement ~ ("else" ~ statement)? }
 statement_return = { "return" ~ expr }
 statement_decl = { type_name ~ ident ~ ("=" ~ expr)? }
 // TODO: dml_upsert

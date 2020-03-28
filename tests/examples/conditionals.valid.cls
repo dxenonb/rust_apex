@@ -11,5 +11,9 @@ public class Foo {
             x += 5;
             return bar;
         }
+
+        if (true) {} else {}
+
+        if (true) {} else if (beta) {}
     }
 }
