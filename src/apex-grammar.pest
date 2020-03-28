@@ -13,7 +13,7 @@ class =
 class_access_mod = _{ access_mod }
 class_def_mod = @{ "abstract" | "virtual" | "with sharing" | "without sharing" }
 class_body = _{ class_item* }
-class_item = { field | constructor | method }
+class_item = { field | constructor | method | class }
 
 implements_list = { type_name ~ ("," ~ type_name)* }
 

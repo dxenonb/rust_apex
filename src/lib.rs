@@ -30,7 +30,7 @@ mod test {
         };
     }
 
-    // TODO: extends, implements
+    // TODO: extends, implements, nested classes
 
     // TODO: Upgrade these to use the new "matches!" macro
 
