@@ -87,6 +87,14 @@ mod test {
     }
 
     #[test]
+    fn parses_array_syntax() {
+        parse!(type_name, "String[]");
+        parse!(type_name, "List<Foo__c>[]");
+        parse!(statement, "List<Foo__c>[] x;");
+        parse!(statement, "String[] x = new String[] { 'a', 'b', 'c' };");
+    }
+
+    #[test]
     fn parses_strings() {
         ApexParser::parse(Rule::string, "''").unwrap();
         ApexParser::parse(Rule::string, "'foo'").unwrap();

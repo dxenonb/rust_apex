@@ -101,7 +101,7 @@ sobject_field_args_list =
     }
 sobject_field_arg = { ident ~ "=" ~ expr }
 
-type_name = { type_path ~ type_args? }
+type_name = { type_path ~ type_args? ~ ("[" ~ "]")? }
 type_args = { "<" ~ type_name ~ ("," ~ type_name)* ~ ">" }
 type_path = { ident ~ ("." ~ ident)* }
 
