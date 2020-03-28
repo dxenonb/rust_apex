@@ -73,6 +73,31 @@ mod test {
             "new Map<Integer, List<Foo__c>>(alpha)"
         ).unwrap();
     }
+    
+    #[test]
+    fn parses_calling_returned_functions() {
+        // can't actually happen in Apex? but it probably shouldn't be a parser error
+        ApexParser::parse(
+            Rule::expr, 
+            "a.b()()()"
+        ).unwrap();
+    }
+
+    #[test]
+    fn parses_chained_method_calls() {
+        ApexParser::parse(
+            Rule::expr, 
+            "a.b().y.x().z.y()"
+        ).unwrap();
+    }
+
+    #[test]
+    fn parses_multiple_unary_ops() {
+        ApexParser::parse(
+            Rule::expr, 
+            "!!----4"
+        ).unwrap();
+    }
 
     #[test]
     #[should_panic]
