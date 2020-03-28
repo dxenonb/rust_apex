@@ -32,7 +32,7 @@ field =
     ~ ((("=" ~ expr)? ~ ";") | field_accessors )
     }
 field_access_mod = _{ access_mod }
-field_modifiers = { ("static" | "final")* }
+field_modifiers = { ("static" | "final" | "transient")* }
 field_accessors = { "{" ~ getter_setter{, 2} ~ "}" }
 getter_setter = { access_mod? ~ ("get" | "set") ~ (";" | "()" ~ method_body) }
 annotation = { "@" ~ ident ~ annotation_arg? }

@@ -7,6 +7,8 @@ public class Foo {
 
     Helper foo;
 
+    transient Helper foo;
+
     global Integer foo = 5;
 
     global static Integer foo = 5;
