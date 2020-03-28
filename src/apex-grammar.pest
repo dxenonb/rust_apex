@@ -63,15 +63,24 @@ statement_decl = { type_name ~ ident ~ "=" ~ expr }
 // TODO: dml_upsert
 statement_dml = { ("insert" | "update" | "delete") ~ expr }
 
+// TODO: Verify precedence and adjust associativity
+// TODO: pest's precedence climber is pry better...
 expr = { expr_assignment }
 expr_assignment = { expr_equality ~ (assign_op ~ expr_equality)* }
-expr_equality = { expr_primary } // TODO: etc
+expr_equality = { expr_comparison ~ (eq_op ~ expr_comparison)* }
+expr_comparison = { expr_multiplication ~ (comp_op ~ expr_multiplication)*  }
+expr_multiplication = { expr_addition ~ (mul_op ~ expr_addition)* }
+expr_addition = { expr_unary ~ (add_op ~ expr_unary)* }
+expr_unary = { unary_op* ~ expr_primary }
 expr_primary = { expr_new | literal | func_call | el_access | soql }
 expr_new = { "new" ~ type_name ~ type_constructor_args }
 
-// TODO: Verify precedence and add missing ops
 assign_op = @{ ("+" | "-" | "*" | "/")? ~ "=" }
-bin_op = { "+=" | "=" }
+eq_op = @{ "!=" | "==" | "!==" | "===" }
+comp_op = @{ "<" | ">" | "<=" | ">=" }
+mul_op = @{ "*" | "/" }
+add_op = @{ "+" | "-" }
+unary_op = @{ "!" | "-" }
 
 type_constructor_args = { list_initializer | sobject_field_args | func_args }
 
