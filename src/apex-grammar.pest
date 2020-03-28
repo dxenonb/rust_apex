@@ -67,11 +67,26 @@ expr = { expr_assignment }
 expr_assignment = { expr_equality ~ (assign_op ~ expr_equality)* }
 expr_equality = { expr_primary } // TODO: etc
 expr_primary = { expr_new | literal | func_call | el_access | soql }
-expr_new = { "new" ~ type_name ~ func_args }
+expr_new = { "new" ~ type_name ~ type_constructor_args }
 
 // TODO: Verify precedence and add missing ops
 assign_op = @{ ("+" | "-" | "*" | "/")? ~ "=" }
 bin_op = { "+=" | "=" }
+
+type_constructor_args = { list_initializer | sobject_field_args | func_args }
+
+list_initializer = { "{" ~ list_init_args? ~ "}" }
+list_init_args = { expr ~ ("," ~ expr)* }
+
+// TODO: naming... this represents for example: "new Account(Name = 'Foo')";
+sobject_field_args = { "(" ~ sobject_field_args_list? ~ ")" }
+sobject_field_args_list = 
+    { "(" 
+    ~ sobject_field_arg
+    ~ ("," ~ sobject_field_args)*
+    ~ ")" 
+    }
+sobject_field_arg = { ident ~ "=" ~ expr }
 
 type_name = { type_path ~ type_args? }
 type_args = { "<" ~ type_name ~ ("," ~ type_name)* ~ ">" }

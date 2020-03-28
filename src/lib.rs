@@ -34,10 +34,32 @@ mod test {
     }
 
     #[test]
+    fn parses_func_call() {
+        ApexParser::parse(Rule::func_call, "baz(x, 1000, 'ninja stars', null)").unwrap();
+    }
+
+    #[test]
     fn parses_type_names() {
         ApexParser::parse(Rule::type_name, "Integer").unwrap();
         ApexParser::parse(Rule::type_name, "List<Object>").unwrap();
         ApexParser::parse(Rule::type_name, "Map<Integer, List<Foo__c>>").unwrap();
+    }
+
+    #[test]
+    fn parses_type_constructors() {
+        ApexParser::parse(Rule::expr_new, "new Account()").unwrap();
+        ApexParser::parse(Rule::expr_new, "new Account(x = 'string')").unwrap();
+        ApexParser::parse(Rule::expr_new, "new Account(x = 'string', y = 4)").unwrap();
+        ApexParser::parse(Rule::expr_new, "new Account(x=true)").unwrap();
+        ApexParser::parse(Rule::expr_new, "new List<Contact> {}").unwrap();
+        ApexParser::parse(Rule::expr_new, "new List<Contact> { 'apple', 'banana' }").unwrap();
+    }
+
+    #[test]
+    fn parses_strings() {
+        ApexParser::parse(Rule::string, "''").unwrap();
+        ApexParser::parse(Rule::string, "'foo'").unwrap();
+        ApexParser::parse(Rule::string, "'\\tf\'o\'o'").unwrap();
     }
 
     #[test]
