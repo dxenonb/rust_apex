@@ -53,12 +53,15 @@ statement =
     { 
         ( statement_return
         | statement_decl
+        | statement_dml
         | expr
         )
     ~ ";" 
     }
 statement_return = { "return" ~ expr }
 statement_decl = { type_name ~ ident ~ "=" ~ expr }
+// TODO: dml_upsert
+statement_dml = { ("insert" | "update" | "delete") ~ expr }
 
 expr = { expr_assignment }
 expr_assignment = { expr_equality ~ (assign_op ~ expr_equality)* }
