@@ -23,7 +23,7 @@ method_access_mod = _{ access_mod }
 method_args = { "(" ~ method_args_list? ~ ")" }
 method_args_list = _{ (method_arg ~ ",")* ~ method_arg }
 method_arg = { type_name ~ ident }
-method_body = { "{" ~ statement* ~ "}" }
+method_body = { block }
 
 // TODO: Allow initial assignment
 // TODO: getters/setters
@@ -40,15 +40,21 @@ annotation_arg = { "(" ~ ident ~ "=" ~ literal ~ ")" }
 
 access_mod = @{ "public" | "private" | "global" }
 
+block = { "{" ~ statement* ~ "}" }
+
 statement = 
-    { 
+    { block
+    | statement_if
+    | (
         ( statement_return
         | statement_dml
         | statement_decl
         | expr
-        )
-    ~ ";" 
+        )? 
+        ~ ";" 
+      )
     }
+statement_if = { "if" ~ "(" ~ expr ~ ")" ~ statement }
 statement_return = { "return" ~ expr }
 statement_decl = { type_name ~ ident ~ ("=" ~ expr)? }
 // TODO: dml_upsert

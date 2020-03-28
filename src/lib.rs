@@ -18,7 +18,36 @@ mod test {
 
     use super::*;
 
+    macro_rules! parse {
+        ($rule:ident, $input:expr) => {
+            let r = ApexParser::parse(Rule::$rule, $input);
+            match r {
+                Err(err) => {
+                    panic!("Failed to parse \"{}\":\n\t{}", $input, err);
+                }
+                _ => {}
+            }
+        };
+    }
+
     // TODO: Upgrade these to use the new "matches!" macro
+
+    #[test]
+    fn parses_noops() {
+        parse!(block, "{}");
+        parse!(block, "{;}");
+        parse!(block, "{;;}");
+        parse!(statement, ";");
+        parse!(statement, "{ ;;; }");
+    }
+
+    #[test]
+    fn parses_conditionals() {
+        parse!(statement_if, "if (true) ;");
+        parse!(statement_if, "if (true) {}");
+        parse!(statement_if, "if (true) { ;;; }");
+        parse!(statement, "if (true) { ;;; }");
+    }
 
     #[test]
     fn parses_integers() {
