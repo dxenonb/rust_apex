@@ -103,15 +103,14 @@ sobject_field_arg = { ident ~ "=" ~ expr }
 
 type_name = { type_path ~ type_args? }
 type_args = { "<" ~ type_name ~ ("," ~ type_name)* ~ ">" }
-type_path = { el_path }
+type_path = { ident ~ ("." ~ ident)* }
 
-// TODO: rename to field access + item path?, then array_access => el_access
-el_access = { el_path ~ el_op* }
-el_op = { func_args | array_access }
+// TODO: rename to field access?, then array_access => el_access
+el_access = { ident ~ el_op* }
+el_op = { func_args | array_access | "." ~ ident }
 func_args = { "(" ~ func_args_list? ~ ")" }
 func_args_list = { expr ~ ("," ~ expr)* }
 array_access = { "[" ~ expr? ~ "]"}
-el_path = { ident ~ ("." ~ ident)* }
 ident = @{ !(keyword ~ WHITESPACE) ~ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 literal = @{ "null" | "true" | "false" | string | num }
 num = @{ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT* )? ~ "L"? }

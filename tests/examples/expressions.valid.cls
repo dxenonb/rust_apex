@@ -22,6 +22,8 @@ global class Foo {
         foo();
         bar(x, y, z);
         baz(x, 1000, 'ninja stars', null);
+
+        ApexPages.currentPage().getParameters().get('parameter');
     }
 
     global static void constructors() {
