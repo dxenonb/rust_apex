@@ -30,6 +30,8 @@ mod test {
         };
     }
 
+    // TODO: extends, implements
+
     // TODO: Upgrade these to use the new "matches!" macro
 
     #[test]
