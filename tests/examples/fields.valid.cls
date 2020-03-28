@@ -17,4 +17,19 @@ public class Foo {
 
     global final static Integer foo = 5;
     final static Integer foo = 5;
+
+    final static Integer foo { get; set; }
+    final static Integer foo { get; }
+    final static Integer foo { set; }
+
+    public final static Integer foo { get; private set; }
+    public final static Integer foo { 
+        get() {
+            return 5;
+        }
+
+        set() {
+            this.x = value;
+        }
+    }
 }
