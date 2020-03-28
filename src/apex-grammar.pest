@@ -51,6 +51,7 @@ block = { "{" ~ statement* ~ "}" }
 statement = 
     { block
     | statement_if
+    | statement_for
     | (
         ( statement_return
         | statement_dml
@@ -61,11 +62,15 @@ statement =
       )
     }
 statement_if = { "if" ~ "(" ~ expr ~ ")" ~ statement ~ ("else" ~ statement)? }
+statement_for = { "for" ~ "(" ~ for_op ~ ")" ~ statement }
 statement_return = { "return" ~ expr }
 statement_decl = { type_name ~ ident ~ ("=" ~ expr)? }
 // TODO: dml_upsert
 statement_dml = { ("insert" | "update" | "delete") ~ expr }
 
+for_op = _{ for_iterator | for_c_style }
+for_iterator = { type_name ~ ident ~ ":" ~ expr }
+for_c_style = { statement_decl ~ ";" ~ expr ~ ";" ~ expr }
 // TODO: Verify precedence and adjust associativity
 // TODO: pest's precedence climber is pry better...
 expr = { expr_ternary }
