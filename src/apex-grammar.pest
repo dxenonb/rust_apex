@@ -67,12 +67,14 @@ statement_dml = { ("insert" | "update" | "delete") ~ expr }
 // TODO: Verify precedence and adjust associativity
 // TODO: pest's precedence climber is pry better...
 expr = { expr_assignment }
-expr_assignment = { expr_equality ~ (assign_op ~ expr_equality)* }
+expr_assignment = { expr_or ~ (assign_op ~ expr_or)* }
+expr_or = { expr_and ~ ("||" ~ expr_and)*  }
+expr_and = { expr_equality ~ ("&&" ~ expr_equality)*  }
 expr_equality = { expr_comparison ~ (eq_op ~ expr_comparison)* }
 expr_comparison = { expr_multiplication ~ (comp_op ~ expr_multiplication)*  }
-expr_multiplication = { expr_addition ~ (mul_op ~ expr_addition)* }
-expr_addition = { expr_unary ~ (add_op ~ expr_unary)* }
-expr_unary = { unary_op* ~ expr_primary }
+expr_addition = { expr_multiplication ~ (add_op ~ expr_multiplication)* }
+expr_multiplication = { expr_unary ~ (mul_op ~ expr_unary)* }
+expr_unary = { unary_op* ~ expr_primary ~ inc_dec_ops* } // TODO: type casting and new are unary ops
 expr_primary = { expr_new | literal | el_access | soql }
 expr_new = { "new" ~ type_name ~ type_constructor_args }
 
@@ -81,7 +83,8 @@ eq_op = @{ "!=" | "==" | "!==" | "===" }
 comp_op = @{ "<" | ">" | "<=" | ">=" }
 mul_op = @{ "*" | "/" }
 add_op = @{ "+" | "-" }
-unary_op = @{ "!" | "-" }
+unary_op = @{ inc_dec_ops | "!" | "-" }
+inc_dec_ops = @{ "++" | "--" }
 
 type_constructor_args = { list_initializer | sobject_field_args | func_args }
 

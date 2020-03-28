@@ -8,6 +8,14 @@ global class Foo {
         x -= 'hey';
         x *= false;
         x /= null;
+
+        x++;
+        x--;
+
+        ++x;
+        --x;
+
+        y = a || b && c;
     }
 
     global static void calls() {
