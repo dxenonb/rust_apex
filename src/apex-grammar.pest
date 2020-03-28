@@ -40,8 +40,9 @@ field_access_mod = _{ access_mod }
 field_modifiers = { ("static" | "final" | "transient")* }
 field_accessors = { "{" ~ getter_setter{, 2} ~ "}" }
 getter_setter = { access_mod? ~ ("get" | "set") ~ (";" | "()" ~ method_body) }
-annotation = { "@" ~ ident ~ annotation_arg? }
-annotation_arg = { "(" ~ ident ~ "=" ~ literal ~ ")" }
+annotation = { "@" ~ ident ~ annotation_args? }
+annotation_args = { "(" ~ annotation_arg ~ annotation_arg* ~ ")" }
+annotation_arg = { ident ~ "=" ~ literal }
 
 access_mod = @{ "public" | "private" | "global" }
 
