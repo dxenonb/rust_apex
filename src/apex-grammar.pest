@@ -64,7 +64,7 @@ statement =
 statement_if = { "if" ~ "(" ~ expr ~ ")" ~ statement ~ ("else" ~ statement)? }
 statement_for = { "for" ~ "(" ~ for_op ~ ")" ~ statement }
 statement_return = { "return" ~ expr }
-statement_decl = { type_name ~ ident ~ ("=" ~ expr)? }
+statement_decl = { ^"final"? ~ type_name ~ ident ~ ("=" ~ expr)? }
 // TODO: dml_upsert
 statement_dml = { ("insert" | "update" | "delete") ~ expr }
 statement_throw = { "throw" ~ expr }
