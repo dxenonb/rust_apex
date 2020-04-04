@@ -58,9 +58,9 @@ statement =
     | statement_if
     | statement_for
     | statement_try_catch
-    | statement_throw // TODO: oopsy! semi colon terminated
     | (
         ( statement_return
+        | statement_throw
         | statement_dml
         | statement_decl
         | expr
