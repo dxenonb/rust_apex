@@ -19,15 +19,15 @@ mod test {
     use super::*;
 
     macro_rules! parse {
-        ($rule:ident, $input:expr) => {
+        ($rule:ident, $input:expr) => {{
             let r = ApexParser::parse(Rule::$rule, $input);
             match r {
                 Err(err) => {
                     panic!("Failed to parse \"{}\":\n\t{}", $input, err);
                 }
-                _ => {}
+                Ok(r) => r,
             }
-        };
+        }};
     }
 
     macro_rules! expect_invalid {
@@ -122,29 +122,29 @@ mod test {
     #[test]
     fn parses_new_exprs() {
         ApexParser::parse(
-            Rule::expr_unary, 
+            Rule::expr_unary,
             "new Map<Integer, List<Foo__c>>(alpha, beta)"
         ).unwrap();
         ApexParser::parse(
-            Rule::expr_unary, 
+            Rule::expr_unary,
             "new Map<Integer, List<Foo__c>>(alpha)"
         ).unwrap();
     }
-    
+
     #[test]
     fn parses_chained_el_ops() {
         // can't actually happen in Apex? but it probably shouldn't be a parser error
         ApexParser::parse(
-            Rule::expr, 
+            Rule::expr,
             "a.b()()()"
         ).unwrap();
 
         ApexParser::parse(
-            Rule::expr, 
+            Rule::expr,
             "a.b()[0]()"
         ).unwrap();
         ApexParser::parse(
-            Rule::expr, 
+            Rule::expr,
             "a[0][1]"
         ).unwrap();
     }
@@ -152,7 +152,7 @@ mod test {
     #[test]
     fn parses_chained_method_calls() {
         ApexParser::parse(
-            Rule::expr, 
+            Rule::expr,
             "a.b().y.x().z.y()"
         ).unwrap();
     }
@@ -160,7 +160,7 @@ mod test {
     #[test]
     fn parses_multiple_unary_ops() {
         ApexParser::parse(
-            Rule::expr, 
+            Rule::expr,
             "!!----4"
         ).unwrap();
     }
@@ -169,9 +169,9 @@ mod test {
     #[should_panic]
     fn disallows_trailing_commas() {
         ApexParser::parse(
-            Rule::expr_unary, 
+            Rule::expr_unary,
             "new Map<Integer, List<Foo__c>>(
-                alpha, 
+                alpha,
                 beta,
             )"
         ).unwrap();

@@ -1,23 +1,13 @@
-test_input = _{ SOI ~ test_expr ~ EOI }
-test_expr = { test_primary ~ (test_infix ~ test_primary)* }
-test_primary = _{ test_group | ident }
-test_group = { "(" ~ test_expr ~ ")" }
-test_infix = _{ test_add | test_sub | test_mul | test_eq }
-test_add = { "+" }
-test_sub = { "-" }
-test_mul = { "*" }
-test_eq = { "=" }
-
 class_file = _{ SOI ~ class ~ EOI }
 
-class = 
-    { annotation* 
+class =
+    { annotation*
     ~ class_access_mod? ~ class_def_mod? ~ "class" ~ ident
         ~ ("implements" ~ implements_list)?
         ~ ("extends" ~ type_name)?
-        ~ "{" 
+        ~ "{"
         ~ class_body
-        ~ "}" 
+        ~ "}"
     }
 
 class_access_mod = _{ access_mod }
@@ -28,10 +18,10 @@ class_item = { field | constructor | method | class }
 implements_list = { type_name ~ ("," ~ type_name)* }
 
 constructor = { method_access_mod? ~ ident ~ method_args ~ method_body }
-method = 
+method =
     { annotation?
-    ~ method_access_mod? ~ "static"? ~ (^"testmethod")? ~ type_name ~ ident ~ method_args 
-        ~ method_body 
+    ~ method_access_mod? ~ "static"? ~ (^"testmethod")? ~ type_name ~ ident ~ method_args
+        ~ method_body
     }
 method_access_mod = _{ access_mod }
 method_args = { "(" ~ method_args_list? ~ ")" }
@@ -41,9 +31,9 @@ method_body = { block }
 
 // TODO: Allow initial assignment
 // TODO: getters/setters
-field = 
-    { annotation? 
-    ~ field_access_mod? ~ field_modifiers ~ type_name ~ ident 
+field =
+    { annotation?
+    ~ field_access_mod? ~ field_modifiers ~ type_name ~ ident
     ~ ((("=" ~ expr)? ~ ";") | field_accessors )
     }
 field_access_mod = _{ access_mod }
@@ -58,7 +48,7 @@ access_mod = @{ "public" | "private" | "global" }
 
 block = { "{" ~ statement* ~ "}" }
 
-statement = 
+statement =
     { block
     | statement_if
     | statement_for
@@ -68,8 +58,8 @@ statement =
         | statement_dml
         | statement_decl
         | expr
-        )? 
-        ~ ";" 
+        )?
+        ~ ";"
       )
     }
 statement_if = { "if" ~ "(" ~ expr ~ ")" ~ statement ~ ("else" ~ statement)? }
@@ -97,8 +87,8 @@ expr_equality = { expr_comparison ~ (eq_op ~ expr_comparison)* }
 expr_comparison = { expr_addition ~ (comp_op ~ expr_addition)*  }
 expr_addition = { expr_multiplication ~ (add_op ~ expr_multiplication)* }
 expr_multiplication = { expr_unary ~ (mul_op ~ expr_unary)* }
-expr_unary = { unary_op* ~ expr_primary ~ inc_dec_ops* } // TODO: new is a unary ops
-expr_primary = { expr_new | literal | el_access | soql }
+expr_unary = { unary_op* ~ expr_primary ~ post_fix_op* }
+expr_primary = { literal | expr_new | el_access | soql }
 expr_new = { "new" ~ type_name ~ type_constructor_args }
 
 assign_op = @{ ("+" | "-" | "*" | "/")? ~ "=" }
@@ -106,10 +96,11 @@ eq_op = @{ "!=" | "==" | "!==" | "===" }
 comp_op = @{ "<" | ">" | "<=" | ">=" }
 mul_op = @{ "*" | "/" }
 add_op = @{ "+" | "-" }
-unary_op = @{ inc_dec_ops | "!" | "-" | type_cast }
-inc_dec_ops = @{ "++" | "--" }
+unary_op = { inc_dec_ops | "!" | "-" | type_cast }
+post_fix_op = { inc_dec_ops }
+inc_dec_ops = _{ "++" | "--" }
 
-type_cast = { "(" ~ type_name ~ ")" }
+type_cast = _{ "(" ~ type_name ~ ")" }
 
 type_constructor_args = { list_initializer | sobject_field_args | func_args }
 
@@ -118,11 +109,11 @@ list_init_args = { expr ~ ("," ~ expr)* }
 
 // TODO: naming... this represents for example: "new Account(Name = 'Foo')";
 sobject_field_args = { "(" ~ sobject_field_args_list? ~ ")" }
-sobject_field_args_list = 
-    { "(" 
+sobject_field_args_list =
+    { "("
     ~ sobject_field_arg
     ~ ("," ~ sobject_field_args)*
-    ~ ")" 
+    ~ ")"
     }
 sobject_field_arg = { ident ~ "=" ~ expr }
 
