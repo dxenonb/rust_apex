@@ -121,8 +121,7 @@ sobject_field_args_list =
 sobject_field_arg = { ident ~ "=" ~ expr }
 
 type_name = { type_path ~ type_args? ~ ("." ~ ^"class")? ~ ("[" ~ "]")? }
-// TODO: not confident about how the array-type marker interacts with ".class"
-type_class = { type_path ~ type_args? ~ "." ~ ^"class" ~ ("[" ~ "]")? }
+type_class = { type_path ~ type_args? ~ "." ~ ^"class" }
 type_args = { "<" ~ type_name ~ ("," ~ type_name)* ~ ">" }
 type_path = { ident ~ ("." ~ ident)* }
 
