@@ -1,3 +1,13 @@
+test_input = _{ SOI ~ test_expr ~ EOI }
+test_expr = { test_primary ~ (test_infix ~ test_primary)* }
+test_primary = _{ test_group | ident }
+test_group = { "(" ~ test_expr ~ ")" }
+test_infix = _{ test_add | test_sub | test_mul | test_eq }
+test_add = { "+" }
+test_sub = { "-" }
+test_mul = { "*" }
+test_eq = { "=" }
+
 class_file = _{ SOI ~ class ~ EOI }
 
 class = 
@@ -75,6 +85,7 @@ catch_guard = { "(" ~ type_name ~ ident ~ ")" }
 for_op = _{ for_iterator | for_c_style }
 for_iterator = { type_name ~ ident ~ ":" ~ expr }
 for_c_style = { statement_decl ~ ";" ~ expr ~ ";" ~ expr }
+
 // TODO: Verify precedence and adjust associativity
 // TODO: pest's precedence climber is pry better...
 expr = { expr_ternary }
@@ -86,7 +97,7 @@ expr_equality = { expr_comparison ~ (eq_op ~ expr_comparison)* }
 expr_comparison = { expr_addition ~ (comp_op ~ expr_addition)*  }
 expr_addition = { expr_multiplication ~ (add_op ~ expr_multiplication)* }
 expr_multiplication = { expr_unary ~ (mul_op ~ expr_unary)* }
-expr_unary = { unary_op* ~ expr_primary ~ inc_dec_ops* } // TODO: type casting and new are unary ops
+expr_unary = { unary_op* ~ expr_primary ~ inc_dec_ops* } // TODO: new is a unary ops
 expr_primary = { expr_new | literal | el_access | soql }
 expr_new = { "new" ~ type_name ~ type_constructor_args }
 
@@ -95,8 +106,10 @@ eq_op = @{ "!=" | "==" | "!==" | "===" }
 comp_op = @{ "<" | ">" | "<=" | ">=" }
 mul_op = @{ "*" | "/" }
 add_op = @{ "+" | "-" }
-unary_op = @{ inc_dec_ops | "!" | "-" }
+unary_op = @{ inc_dec_ops | "!" | "-" | type_cast }
 inc_dec_ops = @{ "++" | "--" }
+
+type_cast = { "(" ~ type_name ~ ")" }
 
 type_constructor_args = { list_initializer | sobject_field_args | func_args }
 

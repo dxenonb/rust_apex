@@ -30,6 +30,18 @@ mod test {
         };
     }
 
+    macro_rules! expect_invalid {
+        ($rule:ident, $input:expr) => {
+            let r = ApexParser::parse(Rule::$rule, $input);
+            match r {
+                Ok(pairs) => {
+                    panic!("Parser accepted \"{}\" as:\n\t{:?}", $input, pairs);
+                }
+                _ => {}
+            }
+        };
+    }
+
     // TODO: extends, implements, nested classes, for loops, try/catch
 
     // TODO: Upgrade these to use the new "matches!" macro
@@ -78,12 +90,12 @@ mod test {
 
     #[test]
     fn parses_type_constructors() {
-        ApexParser::parse(Rule::expr_new, "new Account()").unwrap();
-        ApexParser::parse(Rule::expr_new, "new Account(x = 'string')").unwrap();
-        ApexParser::parse(Rule::expr_new, "new Account(x = 'string', y = 4)").unwrap();
-        ApexParser::parse(Rule::expr_new, "new Account(x=true)").unwrap();
-        ApexParser::parse(Rule::expr_new, "new List<Contact> {}").unwrap();
-        ApexParser::parse(Rule::expr_new, "new List<Contact> { 'apple', 'banana' }").unwrap();
+        ApexParser::parse(Rule::expr_unary, "new Account()").unwrap();
+        ApexParser::parse(Rule::expr_unary, "new Account(x = 'string')").unwrap();
+        ApexParser::parse(Rule::expr_unary, "new Account(x = 'string', y = 4)").unwrap();
+        ApexParser::parse(Rule::expr_unary, "new Account(x=true)").unwrap();
+        ApexParser::parse(Rule::expr_unary, "new List<Contact> {}").unwrap();
+        ApexParser::parse(Rule::expr_unary, "new List<Contact> { 'apple', 'banana' }").unwrap();
     }
 
     #[test]
@@ -102,13 +114,19 @@ mod test {
     }
 
     #[test]
+    fn parses_declarations() {
+        let code = "Map<String, Object> data = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());";
+        parse!(statement, code);
+    }
+
+    #[test]
     fn parses_new_exprs() {
         ApexParser::parse(
-            Rule::expr_new, 
+            Rule::expr_unary, 
             "new Map<Integer, List<Foo__c>>(alpha, beta)"
         ).unwrap();
         ApexParser::parse(
-            Rule::expr_new, 
+            Rule::expr_unary, 
             "new Map<Integer, List<Foo__c>>(alpha)"
         ).unwrap();
     }
@@ -151,11 +169,22 @@ mod test {
     #[should_panic]
     fn disallows_trailing_commas() {
         ApexParser::parse(
-            Rule::expr_new, 
+            Rule::expr_unary, 
             "new Map<Integer, List<Foo__c>>(
                 alpha, 
                 beta,
             )"
         ).unwrap();
+    }
+
+    #[test]
+    fn parses_type_casts() {
+        parse!(type_cast, "(Integer)");
+        parse!(type_cast, "(Map<Integer, Integer>)");
+    }
+
+    #[test]
+    fn parses_unary_expr() {
+        parse!(expr_unary, "++ (Integer) !-apple --");
     }
 }
