@@ -17,13 +17,16 @@ class_item = { field | constructor | method | class }
 
 implements_list = { type_name ~ ("," ~ type_name)* }
 
-constructor = { method_access_mod? ~ ident ~ method_args ~ method_body }
+constructor = { method_modifiers* ~ ident ~ method_args ~ method_body }
 method =
     { annotation?
-    ~ method_access_mod? ~ "static"? ~ (^"testmethod")? ~ type_name ~ ident ~ method_args
+    ~ method_modifiers* ~ type_name ~ ident ~ method_args
         ~ method_body
     }
-method_access_mod = _{ access_mod }
+method_modifiers =
+    { access_mod
+    | ^"static"
+    | ^"testmethod" }
 method_args = { "(" ~ method_args_list? ~ ")" }
 method_args_list = _{ (method_arg ~ ",")* ~ method_arg }
 method_arg = { type_name ~ ident }
@@ -31,18 +34,22 @@ method_body = { block }
 
 field =
     { annotation?
-    ~ field_access_mod? ~ field_modifiers ~ type_name ~ ident
+    ~ field_modifiers* ~ type_name ~ ident
     ~ ((("=" ~ expr)? ~ ";") | field_accessors )
     }
-field_access_mod = _{ access_mod }
-field_modifiers = { ("static" | "final" | "transient")* }
+field_modifiers =
+    { access_mod
+    | ^"static"
+    | ^"final"
+    | ^"transient"
+    }
 field_accessors = { "{" ~ getter_setter{, 2} ~ "}" }
 getter_setter = { access_mod? ~ ("get" | "set") ~ (";" | ("(" ~ ")")? ~ method_body) }
 annotation = { "@" ~ ident ~ annotation_args? }
 annotation_args = { "(" ~ annotation_arg ~ annotation_arg* ~ ")" }
 annotation_arg = { ident ~ "=" ~ literal }
 
-access_mod = @{ "public" | "private" | "global" }
+access_mod = @{ ^"public" | ^"private" | ^"global" }
 
 block = { "{" ~ statement* ~ "}" }
 

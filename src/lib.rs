@@ -197,8 +197,13 @@ mod test {
         parse!(class_item, "public static Integer field { get {} }");
         parse!(class_item, "public static Integer field { get; }");
         parse!(class_item, "public static Integer field { get ( ) { } }");
-        parse!(class_item, "static public Integer field { get ( ) { } }");
-        parse!(class_item, "STATIC PUBLIC Integer field { get ( ) { } }");
+    }
+
+    #[test]
+    fn parses_fields() {
+        parse!(class_item, "Global Static Final Integer field;");
+        parse!(class_item, "static public Integer field;");
+        parse!(class_item, "STATIC PUBLIC Integer field;");
     }
 
     #[test]
