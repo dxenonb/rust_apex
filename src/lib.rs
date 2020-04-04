@@ -197,6 +197,8 @@ mod test {
         parse!(class_item, "public static Integer field { get {} }");
         parse!(class_item, "public static Integer field { get; }");
         parse!(class_item, "public static Integer field { get ( ) { } }");
+        parse!(class_item, "static public Integer field { get ( ) { } }");
+        parse!(class_item, "STATIC PUBLIC Integer field { get ( ) { } }");
     }
 
     #[test]
