@@ -29,8 +29,6 @@ method_args_list = _{ (method_arg ~ ",")* ~ method_arg }
 method_arg = { type_name ~ ident }
 method_body = { block }
 
-// TODO: Allow initial assignment
-// TODO: getters/setters
 field =
     { annotation?
     ~ field_access_mod? ~ field_modifiers ~ type_name ~ ident
