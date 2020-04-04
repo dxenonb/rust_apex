@@ -187,4 +187,12 @@ mod test {
     fn parses_unary_expr() {
         parse!(expr_unary, "++ (Integer) !-apple --");
     }
+
+    #[test]
+    fn parses_properties() {
+        parse!(class_item, "public static Integer field { get () {} }");
+        parse!(class_item, "public static Integer field { get {} }");
+        parse!(class_item, "public static Integer field { get; }");
+        parse!(class_item, "public static Integer field { get ( ) { } }");
+    }
 }

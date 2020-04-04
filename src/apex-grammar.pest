@@ -39,7 +39,7 @@ field =
 field_access_mod = _{ access_mod }
 field_modifiers = { ("static" | "final" | "transient")* }
 field_accessors = { "{" ~ getter_setter{, 2} ~ "}" }
-getter_setter = { access_mod? ~ ("get" | "set") ~ (";" | "()" ~ method_body) }
+getter_setter = { access_mod? ~ ("get" | "set") ~ (";" | ("(" ~ ")")? ~ method_body) }
 annotation = { "@" ~ ident ~ annotation_args? }
 annotation_args = { "(" ~ annotation_arg ~ annotation_arg* ~ ")" }
 annotation_arg = { ident ~ "=" ~ literal }
@@ -89,7 +89,7 @@ expr_addition = { expr_multiplication ~ (add_op ~ expr_multiplication)* }
 expr_multiplication = { expr_unary ~ (mul_op ~ expr_unary)* }
 expr_unary = { unary_op* ~ expr_primary ~ post_fix_op* }
 expr_primary = { literal | expr_new | el_access | soql }
-expr_new = { "new" ~ type_name ~ type_constructor_args }
+expr_new = { ^"new" ~ type_name ~ type_constructor_args }
 
 assign_op = @{ ("+" | "-" | "*" | "/")? ~ "=" }
 eq_op = @{ "!=" | "==" | "!==" | "===" }
