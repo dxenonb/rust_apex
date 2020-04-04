@@ -53,7 +53,7 @@ statement =
     | statement_if
     | statement_for
     | statement_try_catch
-    | statement_throw
+    | statement_throw // TODO: oopsy! semi colon terminated
     | (
         ( statement_return
         | statement_dml
@@ -131,14 +131,13 @@ trailer = { func_args | el_access | ("." ~ ident) }
 func_args = { "(" ~ func_args_list? ~ ")" }
 func_args_list = { expr ~ ("," ~ expr)* }
 el_access = { "[" ~ expr? ~ "]"}
-ident = @{ !(keyword ~ WHITESPACE) ~ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
-literal = @{ ^"null" | ^"true" | ^"false" | string | num }
+ident = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
+literal = @{ ((^"null" | ^"true" | ^"false") ~ !ident_continuation) | string | num }
+ident_continuation = { (ASCII_ALPHANUMERIC | "_")+ }
 num = @{ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT* )? ~ "L"? }
 string = { "'" ~ (raw_string | escape)* ~ "'" }
 escape = { "\\" ~ ANY }
 raw_string = { (!("\\" | "'") ~ ANY)+ }
-
-keyword = @{ ^"new" }
 
 // TODO: very TODO!
 soql = { "[" ~ raw_soql ~ (soql ~ raw_soql?)* ~ "]" }

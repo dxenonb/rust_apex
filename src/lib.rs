@@ -90,12 +90,12 @@ mod test {
 
     #[test]
     fn parses_type_constructors() {
-        ApexParser::parse(Rule::expr_unary, "new Account()").unwrap();
-        ApexParser::parse(Rule::expr_unary, "new Account(x = 'string')").unwrap();
-        ApexParser::parse(Rule::expr_unary, "new Account(x = 'string', y = 4)").unwrap();
-        ApexParser::parse(Rule::expr_unary, "new Account(x=true)").unwrap();
-        ApexParser::parse(Rule::expr_unary, "new List<Contact> {}").unwrap();
-        ApexParser::parse(Rule::expr_unary, "new List<Contact> { 'apple', 'banana' }").unwrap();
+        parse!(statement, "new Account();");
+        parse!(statement, "new Account(x = 'string');");
+        parse!(statement, "new Account(x = 'string', y = 4);");
+        parse!(statement, "new Account(x=true);");
+        parse!(statement, "new List<Contact> {};");
+        parse!(statement, "new List<Contact> { 'apple', 'banana' };");
     }
 
     #[test]
@@ -166,15 +166,14 @@ mod test {
     }
 
     #[test]
-    #[should_panic]
     fn disallows_trailing_commas() {
-        ApexParser::parse(
-            Rule::expr_unary,
+        expect_invalid!(
+            statement,
             "new Map<Integer, List<Foo__c>>(
                 alpha,
                 beta,
-            )"
-        ).unwrap();
+            );"
+        );
     }
 
     #[test]
