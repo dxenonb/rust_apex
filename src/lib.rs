@@ -96,6 +96,7 @@ mod test {
         parse!(statement, "new Account(x=true);");
         parse!(statement, "new List<Contact> {};");
         parse!(statement, "new List<Contact> { 'apple', 'banana' };");
+        parse!(statement, "new Map<String, Integer> { 'apple' => 5, 'banana' => 4 };");
     }
 
     #[test]

@@ -110,10 +110,19 @@ prefix_op = { "++" | "--" | "!" | "-" | type_cast }
 postfix_op = { "++" | "--" }
 type_cast = { "(" ~ type_name ~ ")" }
 
-type_constructor_args = { list_initializer | sobject_field_args | func_args }
+type_constructor_args =
+    { list_initializer
+    | map_initializer
+    | sobject_field_args
+    | func_args
+    }
 
 list_initializer = { "{" ~ list_init_args? ~ "}" }
 list_init_args = { expr ~ ("," ~ expr)* }
+
+map_initializer = { "{" ~ map_init_args? ~ "}" }
+map_init_args = { map_init_arg ~ ("," ~ map_init_arg)* }
+map_init_arg = { expr ~ "=>" ~ expr }
 
 // TODO: naming... this represents for example: "new Account(Name = 'Foo')";
 sobject_field_args = { "(" ~ sobject_field_args_list? ~ ")" }
