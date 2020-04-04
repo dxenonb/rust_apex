@@ -211,4 +211,17 @@ mod test {
     fn parses_ident_with_kw_prefix() {
         parse!(statement, "foo.put(nullStartsWithKeyword);");
     }
+
+    #[test]
+    fn parses_while() {
+        parse!(statement, "while (x) x -= 1;");
+        parse!(statement, "while (x) { x -= 1; }");
+    }
+
+    #[test]
+    fn parses_do_while() {
+        parse!(statement, "do { x -= 5; } while (x > 0);");
+        // blocks are always required for do-while according to the Apex docs
+        expect_invalid!(statement, "do x -= 5; while (x > 0);");
+    }
 }

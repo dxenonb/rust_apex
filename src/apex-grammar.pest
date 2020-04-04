@@ -57,9 +57,11 @@ statement =
     { block
     | statement_if
     | statement_for
+    | statement_while
     | statement_try_catch
     | (
-        ( statement_return
+        ( statement_do_while
+        | statement_return
         | statement_throw
         | statement_dml
         | statement_decl
@@ -76,8 +78,12 @@ statement_decl = { ^"final"? ~ type_name ~ ident ~ ("=" ~ expr)? }
 statement_dml = { (^"insert" | ^"update" | ^"delete") ~ expr }
 statement_throw = { ^"throw" ~ expr }
 statement_try_catch = { ^"try" ~ block ~ ^"catch" ~ catch_guard ~ block }
+statement_do_while = { ^"do" ~ block ~ while_cond }
+statement_while = { while_cond ~ statement }
 
 catch_guard = { "(" ~ type_name ~ ident ~ ")" }
+
+while_cond = { ^"while" ~ "(" ~ expr ~ ")" }
 
 for_op = _{ for_iterator | for_c_style }
 for_iterator = { type_name ~ ident ~ ":" ~ expr }
