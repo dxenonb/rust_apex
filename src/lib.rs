@@ -115,8 +115,12 @@ mod test {
 
     #[test]
     fn parses_declarations() {
-        let code = "Map<String, Object> data = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());";
+        let code;
+        code = "Map<String, Object> data = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());";
         parse!(statement, code);
+        parse!(statement, "final Integer foo;");
+        parse!(statement, "FINAL Integer foo;");
+        parse!(statement, "fInAl Integer foo;");
     }
 
     #[test]
