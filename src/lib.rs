@@ -195,4 +195,9 @@ mod test {
         parse!(class_item, "public static Integer field { get; }");
         parse!(class_item, "public static Integer field { get ( ) { } }");
     }
+
+    #[test]
+    fn parses_ident_with_kw_prefix() {
+        parse!(statement, "foo.put(nullStartsWithKeyword);");
+    }
 }

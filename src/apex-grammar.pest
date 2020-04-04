@@ -69,7 +69,7 @@ statement_return = { "return" ~ expr }
 statement_decl = { type_name ~ ident ~ ("=" ~ expr)? }
 // TODO: dml_upsert
 statement_dml = { ("insert" | "update" | "delete") ~ expr }
-statement_throw = { "throw" ~ expr_new }
+statement_throw = { "throw" ~ expr }
 statement_try_catch = { "try" ~ block ~ "catch" ~ catch_guard ~ block }
 
 catch_guard = { "(" ~ type_name ~ ident ~ ")" }
@@ -78,32 +78,32 @@ for_op = _{ for_iterator | for_c_style }
 for_iterator = { type_name ~ ident ~ ":" ~ expr }
 for_c_style = { statement_decl ~ ";" ~ expr ~ ";" ~ expr }
 
-// TODO: Verify precedence and adjust associativity
-// TODO: pest's precedence climber is pry better...
-expr = { expr_ternary }
-expr_ternary = { expr_assignment ~ ("?" ~ expr ~ ":" ~ expr)? }
-expr_assignment = { expr_or ~ (assign_op ~ expr_or)* }
-expr_or = { expr_and ~ ("||" ~ expr_and)*  }
-expr_and = { expr_equality ~ ("&&" ~ expr_equality)*  }
-expr_equality = { expr_comparison ~ (eq_op ~ expr_comparison)* }
-expr_comparison = { expr_addition ~ (comp_op ~ expr_addition)*  }
-expr_addition = { expr_multiplication ~ (add_op ~ expr_multiplication)* }
-expr_multiplication = { expr_unary ~ (mul_op ~ expr_unary)* }
-expr_unary = { prefix_op* ~ expr_primary ~ postfix_op* }
-expr_primary = { literal | expr_group | expr_new | el_access | soql }
+expr = { expr_infix ~ expr_ternary? }
+expr_ternary = { "?" ~ expr ~ ":" ~ expr }
+expr_infix = { expr_unary ~ (expr_op ~ expr_unary)* }
+expr_op =
+   @{ "+=" | "-=" | "*=" | "/="
+    | "+" | "-" | "*" | "/"
+    | ">=" | "<=" | "<" | ">"
+    | "===" | "!==" | "==" | "!=" | "="
+    | "||" | "&&"
+    | "instanceof"
+    }
+expr_unary = { prefix_op* ~ expr_primary ~ trailer* ~ postfix_op* }
+expr_primary =
+    { literal
+    | expr_group
+    | expr_new
+    | type_class
+    | ident
+    | soql
+    }
 expr_group = { "(" ~ expr ~ ")" }
 expr_new = { ^"new" ~ type_name ~ type_constructor_args }
 
-assign_op = @{ ("+" | "-" | "*" | "/")? ~ "=" }
-eq_op = @{ "!=" | "==" | "!==" | "===" }
-comp_op = @{ "<" | ">" | "<=" | ">=" }
-mul_op = @{ "*" | "/" }
-add_op = @{ "+" | "-" }
-prefix_op = { inc_dec_ops | "!" | "-" | type_cast }
-postfix_op = { inc_dec_ops }
-inc_dec_ops = _{ "++" | "--" }
-
-type_cast = _{ "(" ~ type_name ~ ")" }
+prefix_op = { "++" | "--" | "!" | "-" | type_cast }
+postfix_op = { "++" | "--" }
+type_cast = { "(" ~ type_name ~ ")" }
 
 type_constructor_args = { list_initializer | sobject_field_args | func_args }
 
@@ -120,24 +120,25 @@ sobject_field_args_list =
     }
 sobject_field_arg = { ident ~ "=" ~ expr }
 
-type_name = { type_path ~ type_args? ~ ("[" ~ "]")? }
+type_name = { type_path ~ type_args? ~ ("." ~ ^"class")? ~ ("[" ~ "]")? }
+// TODO: not confident about how the array-type marker interacts with ".class"
+type_class = { type_path ~ type_args? ~ "." ~ ^"class" ~ ("[" ~ "]")? }
 type_args = { "<" ~ type_name ~ ("," ~ type_name)* ~ ">" }
 type_path = { ident ~ ("." ~ ident)* }
 
-// TODO: rename to field access?, then array_access => el_access
-el_access = { ident ~ el_op* }
-el_op = { func_args | array_access | "." ~ ident }
+// Borrowed "trailer" idea from Python grammar
+trailer = { func_args | el_access | ("." ~ ident) }
 func_args = { "(" ~ func_args_list? ~ ")" }
 func_args_list = { expr ~ ("," ~ expr)* }
-array_access = { "[" ~ expr? ~ "]"}
+el_access = { "[" ~ expr? ~ "]"}
 ident = @{ !(keyword ~ WHITESPACE) ~ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
-literal = @{ "null" | "true" | "false" | string | num }
+literal = @{ ^"null" | ^"true" | ^"false" | string | num }
 num = @{ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT* )? ~ "L"? }
 string = { "'" ~ (raw_string | escape)* ~ "'" }
 escape = { "\\" ~ ANY }
 raw_string = { (!("\\" | "'") ~ ANY)+ }
 
-keyword = @{ "new" }
+keyword = @{ ^"new" }
 
 // TODO: very TODO!
 soql = { "[" ~ raw_soql ~ (soql ~ raw_soql?)* ~ "]" }
