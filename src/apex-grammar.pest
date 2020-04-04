@@ -2,16 +2,16 @@ class_file = _{ SOI ~ class ~ EOI }
 
 class =
     { annotation*
-    ~ class_access_mod? ~ class_def_mod? ~ "class" ~ ident
-        ~ ("implements" ~ implements_list)?
-        ~ ("extends" ~ type_name)?
+    ~ class_access_mod? ~ class_def_mod? ~ ^"class" ~ ident
+        ~ (^"implements" ~ implements_list)?
+        ~ (^"extends" ~ type_name)?
         ~ "{"
         ~ class_body
         ~ "}"
     }
 
 class_access_mod = _{ access_mod }
-class_def_mod = @{ "abstract" | "virtual" | "with sharing" | "without sharing" }
+class_def_mod = @{ ^"abstract" | ^"virtual" | ^"with sharing" | ^"without sharing" }
 class_body = _{ class_item* }
 class_item = { field | constructor | method | class }
 
@@ -68,14 +68,14 @@ statement =
         ~ ";"
       )
     }
-statement_if = { "if" ~ "(" ~ expr ~ ")" ~ statement ~ ("else" ~ statement)? }
-statement_for = { "for" ~ "(" ~ for_op ~ ")" ~ statement }
-statement_return = { "return" ~ expr }
+statement_if = { ^"if" ~ "(" ~ expr ~ ")" ~ statement ~ (^"else" ~ statement)? }
+statement_for = { ^"for" ~ "(" ~ for_op ~ ")" ~ statement }
+statement_return = { ^"return" ~ expr }
 statement_decl = { ^"final"? ~ type_name ~ ident ~ ("=" ~ expr)? }
 // TODO: dml_upsert
-statement_dml = { ("insert" | "update" | "delete") ~ expr }
-statement_throw = { "throw" ~ expr }
-statement_try_catch = { "try" ~ block ~ "catch" ~ catch_guard ~ block }
+statement_dml = { (^"insert" | ^"update" | ^"delete") ~ expr }
+statement_throw = { ^"throw" ~ expr }
+statement_try_catch = { ^"try" ~ block ~ ^"catch" ~ catch_guard ~ block }
 
 catch_guard = { "(" ~ type_name ~ ident ~ ")" }
 
@@ -92,7 +92,7 @@ expr_op =
     | ">=" | "<=" | "<" | ">"
     | "===" | "!==" | "==" | "!=" | "="
     | "||" | "&&"
-    | "instanceof"
+    | ^"instanceof"
     }
 expr_unary = { prefix_op* ~ expr_primary ~ trailer* ~ postfix_op* }
 expr_primary =
