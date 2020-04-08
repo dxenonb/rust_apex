@@ -172,7 +172,7 @@ keyword =
     }
 
 // TODO: very TODO!
-soql = { "[" ~ raw_soql ~ (soql ~ raw_soql?)* ~ "]" }
+soql = @{ "[" ~ raw_soql ~ (soql ~ raw_soql?)* ~ "]" }
 raw_soql = { (!("]" | "[") ~ ANY)* }
 
 WHITESPACE = _{ " " | "\t" | NEWLINE }
