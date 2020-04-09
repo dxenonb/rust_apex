@@ -46,7 +46,7 @@ field_modifiers =
     | ^"transient"
     }
 field_accessors = { "{" ~ getter_setter{, 2} ~ "}" }
-getter_setter = { access_mod? ~ ("get" | "set") ~ (";" | ("(" ~ ")")? ~ method_body) }
+getter_setter = { access_mod? ~ (^"get" | ^"set") ~ (";" | ("(" ~ ")")? ~ method_body) }
 
 annotation = { "@" ~ ident ~ annotation_args? }
 annotation_args = { "(" ~ annotation_arg ~ annotation_arg* ~ ")" }
