@@ -183,8 +183,9 @@ mod test {
 
     #[test]
     fn parses_type_casts() {
-        parse!(type_cast, "(Integer)");
-        parse!(type_cast, "(Map<Integer, Integer>)");
+        parse!(type_cast, "(Integer) x");
+        parse!(type_cast, "(Map<Integer, Integer>) y");
+        parse!(type_cast, "(Map<Integer, Integer>) (Decimal) z");
     }
 
     #[test]

@@ -97,7 +97,7 @@ for_c_style = { statement_decl ~ ";" ~ expr ~ ";" ~ expr }
 
 expr = { expr_infix ~ expr_ternary? }
 expr_ternary = { "?" ~ expr ~ ":" ~ expr }
-expr_infix = { expr_unary ~ (expr_op ~ expr_unary)* }
+expr_infix = { expr_unit ~ (expr_op ~ expr_unit)* }
 expr_op =
    @{ "+=" | "-=" | "*=" | "/="
     | "+" | "-" | "*" | "/"
@@ -106,6 +106,9 @@ expr_op =
     | "||" | "&&"
     | ^"instanceof"
     }
+// TODO: Naming; and inspired by Java grammar, but not sure this gives the right 
+// precedence, may need to lift up prefix ops and test how they interact
+expr_unit = { type_cast | expr_unary }
 expr_unary = { prefix_op* ~ expr_primary ~ trailer* ~ postfix_op* }
 expr_primary =
     { literal
@@ -118,9 +121,9 @@ expr_primary =
 expr_group = { "(" ~ expr ~ ")" }
 expr_new = { ^"new" ~ type_name ~ type_constructor_args }
 
-prefix_op = { "++" | "--" | "!" | "-" | type_cast }
+prefix_op = { "++" | "--" | "!" | "-" }
 postfix_op = { "++" | "--" }
-type_cast = { "(" ~ type_name ~ ")" }
+type_cast = { "(" ~ type_name ~ ")" ~ expr_unit }
 
 type_constructor_args =
     { list_initializer
