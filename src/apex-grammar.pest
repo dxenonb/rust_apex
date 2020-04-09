@@ -28,7 +28,7 @@ method_modifiers =
     | ^"static"
     | ^"testmethod" }
 method_args = { "(" ~ method_args_list? ~ ")" }
-method_args_list = _{ (method_arg ~ ",")* ~ method_arg }
+method_args_list = { method_arg ~ ("," ~ method_arg)* }
 method_arg = { type_name ~ ident }
 method_body = { block }
 
@@ -59,6 +59,7 @@ statement =
     | statement_for
     | statement_while
     | statement_try_catch
+    | statement_run_as
     | (
         ( statement_do_while
         | statement_return
@@ -72,14 +73,15 @@ statement =
     }
 statement_if = { ^"if" ~ "(" ~ expr ~ ")" ~ statement ~ (^"else" ~ statement)? }
 statement_for = { ^"for" ~ "(" ~ for_op ~ ")" ~ statement }
+statement_while = { while_cond ~ statement }
+statement_try_catch = { ^"try" ~ block ~ ^"catch" ~ catch_guard ~ block }
+statement_run_as = { ^"system" ~ "." ~ ^"runas" ~ func_args ~ block }
 statement_return = { ^"return" ~ expr }
 statement_decl = { ^"final"? ~ type_name ~ ident ~ ("=" ~ expr)? }
 // TODO: dml_upsert
 statement_dml = { (^"insert" | ^"update" | ^"delete") ~ expr }
 statement_throw = { ^"throw" ~ expr }
-statement_try_catch = { ^"try" ~ block ~ ^"catch" ~ catch_guard ~ block }
 statement_do_while = { ^"do" ~ block ~ while_cond }
-statement_while = { while_cond ~ statement }
 
 catch_guard = { "(" ~ type_name ~ ident ~ ")" }
 
