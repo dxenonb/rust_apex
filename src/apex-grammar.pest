@@ -13,7 +13,7 @@ class =
 class_access_mod = _{ access_mod }
 class_def_mod = @{ ^"abstract" | ^"virtual" | ^"with sharing" | ^"without sharing" }
 class_body = _{ class_item* }
-class_item = { field | constructor | method | class }
+class_item = { field | constructor | method | class | inner_enum }
 
 implements_list = { type_name ~ ("," ~ type_name)* }
 
@@ -47,9 +47,13 @@ field_modifiers =
     }
 field_accessors = { "{" ~ getter_setter{, 2} ~ "}" }
 getter_setter = { access_mod? ~ ("get" | "set") ~ (";" | ("(" ~ ")")? ~ method_body) }
+
 annotation = { "@" ~ ident ~ annotation_args? }
 annotation_args = { "(" ~ annotation_arg ~ annotation_arg* ~ ")" }
 annotation_arg = { ident ~ "=" ~ literal }
+
+inner_enum = { access_mod? ~ ^"enum" ~ ident ~ inner_enum_body }
+inner_enum_body = { "{" ~ (ident ~ ("," ~ ident)*)? ~ "}" }
 
 access_mod = @{ ^"public" | ^"private" | ^"global" }
 

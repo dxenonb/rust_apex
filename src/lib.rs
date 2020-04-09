@@ -225,4 +225,11 @@ mod test {
         // blocks are always required for do-while according to the Apex docs
         expect_invalid!(statement, "do x -= 5; while (x > 0);");
     }
+
+    #[test]
+    fn parses_enums() {
+        parse!(inner_enum, "enum Foo {}");
+        parse!(inner_enum, "global enum Foo { LEFT, RIGHT }");
+        expect_invalid!(inner_enum, "enum Foo { HAS, TRAILING, COMMA, }");
+    }
 }
