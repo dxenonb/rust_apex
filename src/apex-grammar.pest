@@ -80,10 +80,13 @@ statement_while = { while_cond ~ statement }
 statement_try_catch = { ^"try" ~ block ~ ^"catch" ~ catch_guard ~ block }
 statement_run_as = { ^"system" ~ "." ~ ^"runas" ~ func_args ~ block }
 statement_return = { ^"return" ~ expr }
-statement_decl = { ^"final"? ~ type_name ~ ident ~ ("=" ~ expr)? }
+statement_decl = { ^"final"? ~ type_name ~ decl_list }
 statement_dml = { ((^"insert" | ^"update" | ^"delete") ~ expr) | upsert }
 statement_throw = { ^"throw" ~ expr }
 statement_do_while = { ^"do" ~ block ~ while_cond }
+
+decl_list = { decl_local ~ ("," ~ decl_local)* }
+decl_local = { ident ~ ("=" ~ expr)? }
 
 catch_guard = { "(" ~ type_name ~ ident ~ ")" }
 
