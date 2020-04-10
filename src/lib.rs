@@ -90,6 +90,10 @@ mod test {
 
     #[test]
     fn parses_type_constructors() {
+        parse!(type_name, "Account");
+        parse!(expr_new, "new Account()");
+
+        parse!(statement_decl, "new Account()");
         parse!(statement, "new Account();");
         parse!(statement, "new Account(x = 'string');");
         parse!(statement, "new Account(x = 'string', y = 4);");
@@ -122,6 +126,10 @@ mod test {
         parse!(statement, "final Integer foo;");
         parse!(statement, "FINAL Integer foo;");
         parse!(statement, "fInAl Integer foo;");
+
+        parse!(statement, "Foo bar = new Saxophone();");
+        parse!(statement, "News bar = new Saxophone();");
+        parse!(statement, "UpdateNews bar = new Saxophone();");
     }
 
     #[test]
@@ -199,7 +207,7 @@ mod test {
         parse!(class_item, "public static Integer field { get {} }");
         parse!(class_item, "public static Integer field { get; }");
         parse!(class_item, "public static Integer field { get ( ) { } }");
-        
+
         parse!(class_item, "public static Integer field { GET ( ) { } }");
         parse!(class_item, "public static Integer field { SET ( ) { } }");
     }

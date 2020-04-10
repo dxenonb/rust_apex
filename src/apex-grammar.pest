@@ -61,21 +61,18 @@ block = { "{" ~ statement* ~ "}" }
 
 statement =
     { block
+    | ";"
+    | (statement_decl ~ ";")
     | statement_if
     | statement_for
     | statement_while
     | statement_try_catch
     | statement_run_as
-    | (
-        ( statement_do_while
-        | statement_return
-        | statement_throw
-        | statement_dml
-        | statement_decl
-        | expr
-        )?
-        ~ ";"
-      )
+    | (statement_do_while ~ ";")
+    | (statement_return ~ ";")
+    | (statement_throw ~ ";")
+    | (statement_dml ~ ";")
+    | (expr ~ ";")
     }
 statement_if = { ^"if" ~ "(" ~ expr ~ ")" ~ statement ~ (^"else" ~ statement)? }
 statement_for = { ^"for" ~ "(" ~ for_op ~ ")" ~ statement }
@@ -154,8 +151,7 @@ sobject_field_args_list =
 sobject_field_arg = { ident ~ "=" ~ expr }
 
 type_name =
-    { !keyword
-    ~ type_path ~ type_args? ~ ("." ~ ^"class")? ~ ("[" ~ "]")? }
+    { type_path ~ type_args? ~ ("." ~ ^"class")? ~ ("[" ~ "]")? }
 type_class = { type_path ~ type_args? ~ "." ~ ^"class" }
 type_args = { "<" ~ type_name ~ ("," ~ type_name)* ~ ">" }
 type_path = { ident ~ ("." ~ ident)* }
@@ -172,17 +168,6 @@ num = @{ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT* )? ~ "L"? }
 string = { "'" ~ (raw_string | escape)* ~ "'" }
 escape = { "\\" ~ ANY }
 raw_string = { (!("\\" | "'") ~ ANY)+ }
-
-// only keywords that disrupt declaration parsing
-keyword =
-    {
-        ( ^"null"
-        | ^"true"
-        | ^"false"
-        | ^"new"
-        | ^"instanceof"
-        )
-    }
 
 // TODO: very TODO!
 soql = @{ "[" ~ raw_soql ~ (soql ~ raw_soql?)* ~ "]" }
